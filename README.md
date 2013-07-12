@@ -1,6 +1,6 @@
 # S3 File Field
 
-Stand-alone file field for S3 Direct Upload working with Rails nested forms.
+jQuery File Upload extension for direct uploading to Amazon S3 using CORS
 
 Works as an extension of [jQuery File Upload](http://blueimp.github.io/jQuery-File-Upload/) JavaScript plugin and supports IE 7-10.
 
@@ -72,9 +72,10 @@ Add the following js to your asset pipeline:
 
 Create a new view that uses the form helper `s3_uploader_form`:
 ```haml
-= form.s3_file_field :movie, :class => 'js-s3_file_field'
-.progress
-  .meter{ :style => "width: 0%" }
+= form_for :user do |form|
+  = form.s3_file_field :scrapbook, :class => 'js-s3_file_field'
+  .progress
+    .meter{ :style => "width: 0%" }
 ```
 
 Then in your application.js.coffee something like:
