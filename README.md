@@ -79,6 +79,14 @@ Create a new view that uses the form helper `s3_uploader_form`:
 ```
 
 Then in your application.js.coffee something like:
+
+```coffeescript
+jQuery.ready ->
+  $('.js-s3_file_field').S3FileField()
+```
+
+or
+
 ```coffeescript
 ready = ->
   $(".js-s3_file_field").each ->
