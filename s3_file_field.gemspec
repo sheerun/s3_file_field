@@ -6,11 +6,11 @@ require 's3_file_field/version'
 Gem::Specification.new do |gem|
   gem.authors       = ["Adam Stankiewicz"]
   gem.email         = ["sheerun@sher.pl"]
-  gem.description   = %q{Form helper for Direct Uploading to Amazon S3 using CORS and jquery-file-upload}
-  gem.summary       = %q{Form helper for Direct Uploading to Amazon S3 using CORS and jquery-file-upload}
-  gem.homepage      = ""
+  gem.description   = %q{jQuery File Upload extension for direct uploading to Amazon S3 using CORS}
+  gem.summary       = %q{jQuery File Upload extension for direct uploading to Amazon S3 using CORS}
+  gem.homepage      = "https://github.com/sheerun/s3_file_field"
 
-  gem.files         = Dir["{lib,app}/**/*"] + ["LICENSE", "README.md"]
+  gem.files         = Dir["{lib,app}/**/*"] + ["README.md"]
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "s3_file_field"
