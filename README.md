@@ -9,7 +9,7 @@ Works as an extension of [jQuery File Upload](http://blueimp.github.io/jQuery-Fi
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 's3_direct_upload'
+gem 's3_file_field'
 ```
 
 Then add a new initalizer with your AWS credentials:
