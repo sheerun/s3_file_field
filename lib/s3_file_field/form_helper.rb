@@ -15,10 +15,17 @@ module S3FileField
 
     def s3_file_field(object_name, method, options = {})
       uploader = S3Uploader.new(options)
-      ActionView::Helpers::Tags::FileField.new(
-        object_name, method, self,
-        options.reverse_merge(uploader.field_options)
-      ).render
+      options = options.reverse_merge(uploader.field_options)
+      if ::Rails.version.to_i >= 4
+        ActionView::Helpers::Tags::FileField.new(
+          object_name, method, self, options
+        ).render
+      else
+        ActionView::Helpers::InstanceTag.new(
+          object_name, method, self,
+          options.reverse_merge(uploader.field_options).delete(:object)
+        ).to_input_field_tag("file", options.update({:size => nil}))
+      end
     end
 
     class S3Uploader
