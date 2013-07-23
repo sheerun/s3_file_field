@@ -16,6 +16,7 @@ Gem::Specification.new do |gem|
   gem.name          = "s3_file_field"
   gem.require_paths = ["lib"]
   gem.version       = S3FileField::VERSION
+  gem.license       = 'MIT'
 
   gem.add_dependency 'rails', '>= 3.2'
   gem.add_dependency 'coffee-rails', '>= 3.2.1'
