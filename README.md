@@ -146,3 +146,5 @@ After successful upload, you'll find file data in `data.result` field:
 ## License
 
 This repository is MIT-licensed. You are awesome.
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/sheerun/s3_file_field/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
