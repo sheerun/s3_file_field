@@ -14,9 +14,9 @@ Add this line to your application's Gemfile:
 gem 's3_file_field'
 ```
 
-Then add a new initalizer with your AWS credentials:
+Then add a new initializer with your AWS credentials:
 
-**config/initalizers/s3_file_field.rb**
+**config/initializers/s3_file_field.rb**
 ```ruby
 S3FileField.config do |c|
   c.access_key_id = ENV['AWS_ACCESS_KEY_ID']
