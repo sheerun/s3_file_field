@@ -87,7 +87,7 @@ jQuery.ready ->
   $('.js-s3_file_field').S3FileField()
 ```
 
-or
+but it's pretty useless unless you define at least `done` callback. Here is more advanced example:
 
 ```coffeescript
 ready = ->
