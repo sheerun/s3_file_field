@@ -3,6 +3,8 @@
 
 jQuery.fn.S3FileField = (options) ->
 
+  options = {} unless options?
+
   # support multiple elements
   if @length > 1
     @each -> $(this).S3Uploader options if @length > 1
