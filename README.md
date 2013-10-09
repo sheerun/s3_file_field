@@ -116,6 +116,8 @@ $(document).on('page:load', ready)
 Notice that after upload you have to re-fetch file field from DOM by its ID. That's becase
 jQuery File Upload clones it somewhere else and `$(this)` reference points to the original input.
 
+For full list of options reference [jQuery File Field wiki page](https://github.com/blueimp/jQuery-File-Upload/wiki/Options)
+
 
 ## Advanced customization
 
