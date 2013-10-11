@@ -15,7 +15,7 @@ module S3FileField
 
     def s3_file_field(object_name, method, options = {})
       uploader = S3Uploader.new(options)
-      options = options.reverse_merge(uploader.field_options)
+      options.reverse_merge!(uploader.field_options)
       if ::Rails.version.to_i >= 4
         ActionView::Helpers::Tags::FileField.new(
           object_name, method, self, options
@@ -30,14 +30,24 @@ module S3FileField
 
     class S3Uploader
       def initialize(options)
-        @options = options.reverse_merge(
+        @options = {
           aws_access_key_id: S3FileField.config.access_key_id,
           aws_secret_access_key: S3FileField.config.secret_access_key,
           bucket: S3FileField.config.bucket,
           acl: "public-read",
           expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
-          key_starts_with: options[:key_starts_with] || "uploads/"
+          key_starts_with: "uploads/",
+          data: {}
+        }.merge! options
+
+        @options[:data].merge!(
+          :url => url,
+          :key => @options[:key] || key,
+          :acl => @options[:acl],
+          :'aws-access-key-id' => @options[:aws_access_key_id],
+          :policy => policy,
+          :signature => signature
         )
 
         unless @options[:aws_access_key_id]
@@ -54,16 +64,7 @@ module S3FileField
       end
 
       def field_options
-        {
-          data: {
-            :url => url,
-            :key => @options[:key] || key,
-            :acl => @options[:acl],
-            :'aws-access-key-id' => @options[:aws_access_key_id],
-            :policy => policy,
-            :signature => signature
-          }.reverse_merge(@options[:data] || {})
-        }
+        @options.slice(:data)
       end
 
       def key
