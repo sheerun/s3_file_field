@@ -14,38 +14,52 @@ module S3FileField
     end
 
     def s3_file_field(object_name, method, options = {})
-      uploader = S3Uploader.new(options)
-      options = options.reverse_merge(uploader.field_options)
+      options[:data] ||= {}
+      options[:data].merge! S3Uploader.new(options).field_options
       if ::Rails.version.to_i >= 4
         ActionView::Helpers::Tags::FileField.new(
           object_name, method, self, options
         ).render
       else
         ActionView::Helpers::InstanceTag.new(
-          object_name, method, self,
-          options.reverse_merge(uploader.field_options).delete(:object)
-        ).to_input_field_tag("file", options.update({:size => nil}))
+          object_name, method, self, options.delete(:object)
+        ).to_input_field_tag("file", options.update(:size => nil))
       end
     end
 
     class S3Uploader
-      def initialize(options)
-        @options = options.reverse_merge(
-          aws_access_key_id: S3FileField.config.access_key_id,
-          aws_secret_access_key: S3FileField.config.secret_access_key,
+      def initialize(input_options)
+        @options = {
+          access_key_id: S3FileField.config.access_key_id,
+          secret_access_key: S3FileField.config.secret_access_key,
           bucket: S3FileField.config.bucket,
           acl: "public-read",
           expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
-          key_starts_with: options[:key_starts_with] || "uploads/"
-        )
+          conditions: [],
+          key_starts_with: 'uploads/',
+        }
 
-        unless @options[:aws_access_key_id]
-          raise Error.new("Please configure aws_access_key_id option.")
+        @options.merge!(input_options.extract! *@options.keys)
+
+        @key = input_options.delete(:key)
+
+        @field_data_options = {
+          url: url,
+          key: key,
+          acl: @options[:acl],
+          aws_access_key_id: @options[:access_key_id],
+          policy: policy,
+          signature: signature
+        }
+
+
+        unless @options[:access_key_id]
+          raise Error.new("Please configure access_key_id option.")
         end
 
-        unless @options[:aws_secret_access_key]
-          raise Error.new("Please configure aws_secret_access_key option.")
+        unless @options[:secret_access_key]
+          raise Error.new("Please configure secret_access_key option.")
         end
 
         unless @options[:bucket]
@@ -54,16 +68,7 @@ module S3FileField
       end
 
       def field_options
-        {
-          data: {
-            :url => url,
-            :key => @options[:key] || key,
-            :acl => @options[:acl],
-            :'aws-access-key-id' => @options[:aws_access_key_id],
-            :policy => policy,
-            :signature => signature
-          }.reverse_merge(@options[:data] || {})
-        }
+        @field_data_options
       end
 
       def key
@@ -89,7 +94,7 @@ module S3FileField
             {bucket: @options[:bucket]},
             {acl: @options[:acl]},
             {success_action_status: "201"}
-          ] + (@options[:conditions] || [])
+          ] + @options[:conditions]
         }
       end
 
@@ -97,7 +102,7 @@ module S3FileField
         Base64.encode64(
           OpenSSL::HMAC.digest(
             OpenSSL::Digest::Digest.new('sha1'),
-            @options[:aws_secret_access_key], policy
+            @options[:secret_access_key], policy
           )
         ).gsub("\n", "")
       end
