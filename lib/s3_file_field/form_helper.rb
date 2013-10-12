@@ -29,49 +29,49 @@ module S3FileField
 
     class S3Uploader
       def initialize(options)
-        @options = {
-          aws_access_key_id: S3FileField.config.access_key_id,
-          aws_secret_access_key: S3FileField.config.secret_access_key,
-          bucket: S3FileField.config.bucket,
-          acl: "public-read",
-          expiration: 10.hours.from_now.utc.iso8601,
-          max_file_size: 500.megabytes,
-          key_starts_with: "uploads/",
-          data: {}
-        }.merge! options
+        @key_starts_with = options.delete(:key_starts_with) || 'uploads/'
+        @access_key_id = options.delete(:aws_access_key_id) || S3FileField.config.access_key_id
+        @secret_access_key = options.delete(:aws_secret_access_key) || S3FileField.config.secret_access_key
+        @bucket = options.delete(:bucket) || S3FileField.config.bucket
+        @acl = options.delete(:acl) || 'public-read'
+        @expiration = options.delete(:expiration) || 10.hours.from_now.utc.iso8601
+        @max_file_size = options.delete(:max_file_size) || 500.megabytes
+        @key = options.delete(:key)
+        @conditions = options.delete(:conditions) || []
 
-        @options[:data].merge!(
-          :url => url,
-          :key => @options[:key] || key,
-          :acl => @options[:acl],
-          :'aws-access-key-id' => @options[:aws_access_key_id],
-          :policy => policy,
-          :signature => signature
-        )
+        @field_data_options = {
+          url: url,
+          key: key,
+          acl: @acl,
+          aws_access_key_id: @access_key_id,
+          policy: policy,
+          signature: signature
+        }.merge! options.delete(:data)
 
-        unless @options[:aws_access_key_id]
+
+        unless @access_key_id
           raise Error.new("Please configure aws_access_key_id option.")
         end
 
-        unless @options[:aws_secret_access_key]
+        unless @secret_access_key
           raise Error.new("Please configure aws_secret_access_key option.")
         end
 
-        unless @options[:bucket]
+        unless @bucket
           raise Error.new("Please configure bucket name.")
         end
       end
 
       def field_options
-        @options.slice(:data)
+        { data: @field_data_options }
       end
 
       def key
-        @key ||= "#{@options[:key_starts_with]}{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}"
+        @key ||= "#{@key_starts_with}{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}"
       end
 
       def url
-        "//#{@options[:bucket]}.s3.amazonaws.com/"
+        "//#{@bucket}.s3.amazonaws.com/"
       end
 
       def policy
@@ -80,16 +80,16 @@ module S3FileField
 
       def policy_data
         {
-          expiration: @options[:expiration],
+          expiration: @expiration,
           conditions: [
-            ["starts-with", "$key", @options[:key_starts_with]],
+            ["starts-with", "$key", @key_starts_with],
             ["starts-with", "$x-requested-with", ""],
-            ["content-length-range", 0, @options[:max_file_size]],
+            ["content-length-range", 0, @max_file_size],
             ["starts-with","$Content-Type",""],
-            {bucket: @options[:bucket]},
-            {acl: @options[:acl]},
+            {bucket: @bucket},
+            {acl: @acl},
             {success_action_status: "201"}
-          ] + (@options[:conditions] || [])
+          ] + @conditions
         }
       end
 
@@ -97,7 +97,7 @@ module S3FileField
         Base64.encode64(
           OpenSSL::HMAC.digest(
             OpenSSL::Digest::Digest.new('sha1'),
-            @options[:aws_secret_access_key], policy
+            @secret_access_key, policy
           )
         ).gsub("\n", "")
       end
