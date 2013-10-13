@@ -55,11 +55,11 @@ module S3FileField
 
 
         unless @options[:access_key_id]
-          raise Error.new("Please configure aws_access_key_id option.")
+          raise Error.new("Please configure access_key_id option.")
         end
 
         unless @options[:secret_access_key]
-          raise Error.new("Please configure aws_secret_access_key option.")
+          raise Error.new("Please configure secret_access_key option.")
         end
 
         unless @options[:bucket]
