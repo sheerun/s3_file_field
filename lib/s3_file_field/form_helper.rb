@@ -14,8 +14,8 @@ module S3FileField
     end
 
     def s3_file_field(object_name, method, options = {})
-      uploader = S3Uploader.new(options)
-      options = uploader.field_options.merge options
+      options[:data] ||= {}
+      options[:data].merge! S3Uploader.new(options).field_options
       if ::Rails.version.to_i >= 4
         ActionView::Helpers::Tags::FileField.new(
           object_name, method, self, options
@@ -33,7 +33,7 @@ module S3FileField
           access_key_id: S3FileField.config.access_key_id,
           secret_access_key: S3FileField.config.secret_access_key,
           bucket: S3FileField.config.bucket,
-          acl: 'public-read',
+          acl: "public-read",
           expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
           conditions: [],
@@ -51,7 +51,7 @@ module S3FileField
           aws_access_key_id: @options[:access_key_id],
           policy: policy,
           signature: signature
-        }.merge! input_options.delete(:data)
+        }
 
 
         unless @options[:access_key_id]
@@ -68,7 +68,7 @@ module S3FileField
       end
 
       def field_options
-        { data: @field_data_options }
+        @field_data_options
       end
 
       def key
