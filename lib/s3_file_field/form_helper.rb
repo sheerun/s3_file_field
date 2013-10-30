@@ -16,6 +16,7 @@ module S3FileField
     def s3_file_field(object_name, method, options = {})
       uploader = S3Uploader.new(options)
       options = options.reverse_merge(uploader.field_options)
+      options.delete(:object) if (options[:object] && options[:object].new_record?)
       if ::Rails.version.to_i >= 4
         ActionView::Helpers::Tags::FileField.new(
           object_name, method, self, options
