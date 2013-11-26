@@ -13,14 +13,10 @@ Note: Since 1.0.2 gem works with both Rails 3 and Rails 4.
 gem 's3_file_field'
 ```
 
-Add the following js to your asset pipeline:
-
 **application.coffee**
 ```coffeescript
 #= require s3_file_field
 ```
-
-Then add a new initializer with your AWS credentials (you can overwrite defaults in per-input basis):
 
 **config/initializers/s3_file_field.rb**
 ```ruby
