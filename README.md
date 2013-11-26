@@ -90,7 +90,7 @@ jQuery.ready ->
     done: (e, data) -> console.log(data.result.url)
 ```
 
-# Advanced usage
+## Advanced usage
 
 ```haml
 = form_for :user do |f|
