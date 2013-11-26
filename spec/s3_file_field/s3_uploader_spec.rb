@@ -90,6 +90,11 @@ module S3FileField
         options.delete(:data)
         expect(options).to eq(:remote => true)
       end
+
+      it 'leaves non-se_file_field specific data options' do
+        options = S3Uploader.new(:data => {:remote => true }).field_options
+        expect(options[:data]).to include(:remote => true)
+      end
     end
   end
 end
