@@ -49,7 +49,7 @@ module S3FileField
         aws_access_key_id: @options[:access_key_id],
         policy: policy,
         signature: signature
-      }.merge(@options[:data] || {})
+      }.merge(@original_options[:data] || {})
     end
 
     private
