@@ -8,10 +8,16 @@ Note: Since 1.0.2 gem works with both Rails 3 and Rails 4.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
+**Gemfile**
 ```ruby
 gem 's3_file_field'
+```
+
+Add the following js to your asset pipeline:
+
+**application.coffee**
+```coffeescript
+#= require s3_file_field
 ```
 
 Then add a new initializer with your AWS credentials (you can overwrite defaults in per-input basis):
@@ -29,6 +35,8 @@ S3FileField.config do |c|
   # c.key_starts_with = 'uploads/
 end
 ```
+
+### S3 configuration
 
 Make sure your AWS S3 CORS Settings for your bucket look like this:
 ```xml
@@ -66,13 +74,6 @@ Also ensure you've added `PutObject` and `PutObjectAcl` permission in your bucke
     }
   ]
 }
-```
-
-Add the following js to your asset pipeline:
-
-**application.js.coffee**
-```coffeescript
-#= require s3_file_field
 ```
 
 ## Basic usage
