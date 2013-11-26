@@ -7,7 +7,7 @@ jQuery File Upload extension for direct uploading to Amazon S3 using CORS
 
 Works as an extension of [jQuery File Upload](http://blueimp.github.io/jQuery-File-Upload/) JavaScript plugin and supports IE 7-10.
 
-Note: Since 1.0.2 gem works with both Rails 3 and Rails 4.
+It supports multiple upload, and per-input configuration.
 
 ## Installation
 
