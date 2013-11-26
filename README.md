@@ -1,7 +1,7 @@
 # S3 File Field [![Build Status][travis-img-url]][travis-url]
 
 [travis-img-url]: https://travis-ci.org/sheerun/s3_file_field.png
-[travis-url]: https://travis-ci-org/sheerun/s3_file_field
+[travis-url]: https://travis-ci.org/sheerun/s3_file_field
 
 jQuery File Upload extension for direct uploading to Amazon S3 using CORS
 
