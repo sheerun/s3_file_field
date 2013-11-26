@@ -1,11 +1,8 @@
-.DS_Store
-spec/gallery-jquery-fileupload
 *.gem
 *.rbc
 .bundle
 .config
 .yardoc
-.idea
 Gemfile.lock
 InstalledFiles
 _yardoc
