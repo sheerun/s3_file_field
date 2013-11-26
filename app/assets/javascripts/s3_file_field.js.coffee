@@ -34,12 +34,12 @@ jQuery.fn.S3FileField = (options) ->
   add = extractOption('add')
   done = extractOption('done')
   fail = extractOption('fail')
-  formData = extractOption('formData')
+  extraFormData = extractOption('formData')
 
   delete options['paramName']
   delete options['singleFileUploads']
 
-  finalFormData = undefined
+  finalFormData = {}
 
   settings =
     # File input name must be "file"
@@ -63,15 +63,16 @@ jQuery.fn.S3FileField = (options) ->
       if add? then add(e, data) else data.submit()
 
     done: (e, data) ->
-      data.result = build_content_object $this, data.files[0], data.result
+      data.result = build_content_object data.files[0]
       done(e, data) if done?
 
     fail: (e, data) ->
       fail(e, data) if fail?
 
     formData: (form) ->
-      finalFormData =
-        key: $this.data('key').replace('{timestamp}', new Date().getTime()).replace('{unique_id}', @files[0].unique_id)
+      unique_id = @files[0].unique_id
+      finalFormData[unique_id] =
+        key: $this.data('key').replace('{timestamp}', new Date().getTime()).replace('{unique_id}', unique_id)
         'Content-Type': @files[0].type
         acl: $this.data('acl')
         'AWSAccessKeyId': $this.data('aws-access-key-id')
@@ -80,14 +81,14 @@ jQuery.fn.S3FileField = (options) ->
         success_action_status: "201"
         'X-Requested-With': 'xhr'
 
-      getFormData(finalFormData).concat(getFormData(formData))
+      getFormData(finalFormData[unique_id]).concat(getFormData(extraFormData))
 
   jQuery.extend settings, options
 
-  build_content_object = ($this, file, result) ->
+  build_content_object = (file) ->
     domain = settings.url.replace(/\/+$/, '').replace(/^(https?:)?/, 'https:')
     content = {}
-    content.filepath   = finalFormData['key'].replace('/${filename}', '')
+    content.filepath   = finalFormData[file.unique_id]['key'].replace('/${filename}', '')
     content.url        = domain + '/' + content.filepath + '/' + file.name
     content.filename   = file.name
     content.filesize   = file.size if 'size' of file
