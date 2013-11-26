@@ -14,7 +14,7 @@ Add this line to your application's Gemfile:
 gem 's3_file_field'
 ```
 
-Then add a new initializer with your AWS credentials:
+Then add a new initializer with your AWS credentials (you can overwrite defaults in per-input basis):
 
 **config/initializers/s3_file_field.rb**
 ```ruby
@@ -22,6 +22,11 @@ S3FileField.config do |c|
   c.access_key_id = ENV['AWS_ACCESS_KEY_ID']
   c.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
   c.bucket = ENV['AWS_BUCKET']
+  # c.acl = "public-read"
+  # c.expiration = 10.hours.from_now.utc.iso8601
+  # c.max_file_size = 500.megabytes
+  # c.conditions = []
+  # c.key_starts_with = 'uploads/
 end
 ```
 
@@ -70,24 +75,29 @@ Add the following js to your asset pipeline:
 #= require s3_file_field
 ```
 
-## Usage
+## Basic usage
 
-Create a new view that uses the form helper `s3_uploader_form`:
 ```haml
-= form_for :user do |form|
-  = form.s3_file_field :scrapbook, :class => 'js-s3_file_field'
+= form_for :user do |f|
+  = f.s3_file_field :avatar, :class => 'js-s3_file_field'
   .progress
     .meter{ :style => "width: 0%" }
 ```
 
-Then in your application.js.coffee something like:
-
 ```coffeescript
 jQuery.ready ->
-  $('.js-s3_file_field').S3FileField()
+  $('.js-s3_file_field').S3FileField
+    done: (e, data) -> console.log(data.result.url)
 ```
 
-but it's pretty useless unless you define at least `done` callback. Here is more advanced example:
+# Advanced usage
+
+```haml
+= form_for :user do |f|
+  = f.s3_file_field :avatar, :class => 'js-s3_file_field', :key => "/uploads/${timestamp}/${filename}"
+  .progress
+    .meter{ :style => "width: 0%" }
+```
 
 ```coffeescript
 ready = ->
@@ -113,22 +123,18 @@ $(document).ready(ready)
 $(document).on('page:load', ready)
 ```
 
-Notice that after upload you have to re-fetch file field from DOM by its ID. That's becase
-jQuery File Upload clones it somewhere else and `$(this)` reference points to the original input.
-
-For full list of options reference [jQuery File Field wiki page](https://github.com/blueimp/jQuery-File-Upload/wiki/Options)
-
-
 ## Advanced customization
 
 You can use any options / API available for jQuery File Upload plugin.
+
+For full list of options reference [jQuery File Field wiki page](https://github.com/blueimp/jQuery-File-Upload/wiki/Options)
 
 After successful upload, you'll find file data in `data.result` field:
 
 ```json
 {
-  "filepath": "uploads/v3w3qzcb1d78pvi/something.gif",
   "url": "https://foobar.s3.amazonaws.com/uploads/v3w3qzcb1d78pvi/something.gif",
+  "filepath": "uploads/v3w3qzcb1d78pvi/something.gif",
   "filename": "something.gif",
   "filesize": 184387,
   "filetype": "image\/gif",
