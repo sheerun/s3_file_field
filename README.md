@@ -74,7 +74,7 @@ Also ensure you've added `PutObject` and `PutObjectAcl` permission in your bucke
 
 ## Basic usage
 
-```slim
+```haml
 = form_for :user do |f|
   = f.s3_file_field :avatar, :class => 'js-s3_file_field'
   .progress
@@ -89,7 +89,7 @@ jQuery.ready ->
 
 # Advanced usage
 
-```slim
+```haml
 = form_for :user do |f|
   = f.s3_file_field :avatar,
     :class => 'js-s3_file_field',
