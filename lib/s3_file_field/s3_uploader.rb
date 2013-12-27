@@ -12,7 +12,8 @@ module S3FileField
         expiration: 10.hours.from_now.utc.iso8601,
         max_file_size: 500.megabytes,
         conditions: [],
-        key_starts_with: 'uploads/'
+        key_starts_with: 'uploads/',
+        region: S3FileField.config.region || 's3'
       }
 
       @key = original_options[:key]
@@ -59,7 +60,7 @@ module S3FileField
     end
 
     def url
-      "//#{@options[:bucket]}.s3.amazonaws.com/"
+      "//#{@options[:bucket]}.#{@options[:region]}.amazonaws.com/"
     end
 
     def policy
