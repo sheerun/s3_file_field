@@ -4,7 +4,7 @@ module S3FileField
   class Config
     include Singleton
 
-    ATTRIBUTES = [:access_key_id, :secret_access_key, :bucket, :prefix_to_clean, :region, :url]
+    ATTRIBUTES = [:access_key_id, :secret_access_key, :bucket, :prefix_to_clean, :region, :url, :key_starts_with]
 
     attr_accessor *ATTRIBUTES
   end
