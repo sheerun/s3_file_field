@@ -12,7 +12,7 @@ module S3FileField
         expiration: 10.hours.from_now.utc.iso8601,
         max_file_size: 500.megabytes,
         conditions: [],
-        key_starts_with: 'uploads/',
+        key_starts_with: S3FileField.config.key_starts_with || 'uploads/',
         region: S3FileField.config.region || 's3'
       }
 
