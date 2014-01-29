@@ -85,7 +85,7 @@ module S3FileField
     def signature
       Base64.encode64(
         OpenSSL::HMAC.digest(
-          OpenSSL::Digest::Digest.new('sha1'),
+          OpenSSL::Digest.new('sha1'),
           @options[:secret_access_key], policy
         )
       ).gsub("\n", '')
