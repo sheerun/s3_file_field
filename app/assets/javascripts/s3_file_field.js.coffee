@@ -63,7 +63,7 @@ jQuery.fn.S3FileField = (options) ->
       if add? then add(e, data) else data.submit()
 
     done: (e, data) ->
-      data.result = build_content_object data.files[0]
+      data.result = build_content_object data.files[0], data.result
       done(e, data) if done?
 
     fail: (e, data) ->
@@ -85,11 +85,15 @@ jQuery.fn.S3FileField = (options) ->
 
   jQuery.extend settings, options
 
-  build_content_object = (file) ->
+  build_content_object = (file, result) ->
     domain = settings.url.replace(/\/+$/, '').replace(/^(https?:)?/, 'https:')
     content = {}
-    content.filepath   = finalFormData[file.unique_id]['key'].replace('/${filename}', '')
-    content.url        = domain + '/' + content.filepath + '/' + file.name
+    if result # Use the S3 response to set the URL to avoid character encodings bugs
+      content.url            = $(result).find("Location").text()
+      content.filepath       = $('<a />').attr('href', content.url)[0].pathname
+    else # IE <= 9 retu      rn a null result object so we use the file object instead
+      content.filepath   = finalFormData[file.unique_id]['key'].replace('/${filename}', '')
+      content.url        = domain + '/' + content.filepath + '/' + encodeURIComponent(file.name)
     content.filename   = file.name
     content.filesize   = file.size if 'size' of file
     content.filetype   = file.type if 'type' of file
