@@ -96,7 +96,7 @@ jQuery.fn.S3FileField = (options) ->
     content = {}
 
     if result # Use the S3 response to set the URL to avoid character encodings bugs
-      content.url            = $(result).find("Location").text()
+      content.url            = $(result).find("Location").text().replace("%2F", "/").replace('http:', 'https:')
       content.filepath       = $('<a />').attr('href', content.url)[0].pathname
     else # IE <= 9 returns null result so hack is necessary
       domain = settings.url.replace(/\/+$/, '').replace(/^(https?:)?/, 'https:')
