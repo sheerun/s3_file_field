@@ -1,6 +1,5 @@
 #= require jquery-fileupload/basic
 #= require jquery-fileupload/vendor/tmpl
-#= require ./unorm
 
 jQuery.fn.S3FileField = (options) ->
 
@@ -64,7 +63,7 @@ jQuery.fn.S3FileField = (options) ->
       if add? then add(e, data) else data.submit()
 
     done: (e, data) ->
-      data.result = build_content_object data.files[0]
+      data.result = build_content_object(data.files[0], data.result)
       done(e, data) if done?
 
     fail: (e, data) ->
@@ -87,17 +86,23 @@ jQuery.fn.S3FileField = (options) ->
   jQuery.extend settings, options
 
   to_s3_filename = (filename) ->
-    normalized = unorm.nfc(filename)
-    trimmed = normalized.replace(/^\s+|\s+$/g,'')
+    trimmed = filename.replace(/^\s+|\s+$/g,'')
     strip_before_slash = trimmed.split('\\').slice(-1)[0]
     double_encode_quote = strip_before_slash.replace('"', '%22')
     encodeURIComponent(double_encode_quote)
 
-  build_content_object = (file) ->
-    domain = settings.url.replace(/\/+$/, '').replace(/^(https?:)?/, 'https:')
+  build_content_object = (file, result) ->
+
     content = {}
-    content.filepath   = finalFormData[file.unique_id]['key'].replace('/${filename}', '')
-    content.url        = domain + '/' + content.filepath + '/' + to_s3_filename(file.name)
+
+    if result # Use the S3 response to set the URL to avoid character encodings bugs
+      content.url            = $(result).find("Location").text()
+      content.filepath       = $('<a />').attr('href', content.url)[0].pathname
+    else # IE <= 9 returns null result so hack is necessary
+      domain = settings.url.replace(/\/+$/, '').replace(/^(https?:)?/, 'https:')
+      content.filepath   = finalFormData[file.unique_id]['key'].replace('/${filename}', '')
+      content.url        = domain + '/' + content.filepath + '/' + to_s3_filename(file.name)
+
     content.filename   = file.name
     content.filesize   = file.size if 'size' of file
     content.filetype   = file.type if 'type' of file
