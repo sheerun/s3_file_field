@@ -1,5 +1,6 @@
 #= require jquery-fileupload/basic
 #= require jquery-fileupload/vendor/tmpl
+#= require ./unorm
 
 jQuery.fn.S3FileField = (options) ->
 
@@ -85,11 +86,18 @@ jQuery.fn.S3FileField = (options) ->
 
   jQuery.extend settings, options
 
+  to_s3_filename = (filename) ->
+    normalized = unorm.nfc(filename)
+    trimmed = normalized.replace(/^\s+|\s+$/g,'')
+    strip_before_slash = trimmed.split('\\').slice(-1)[0]
+    double_encode_quote = strip_before_slash.replace('"', '%22')
+    encodeURIComponent(double_encode_quote)
+
   build_content_object = (file) ->
     domain = settings.url.replace(/\/+$/, '').replace(/^(https?:)?/, 'https:')
     content = {}
     content.filepath   = finalFormData[file.unique_id]['key'].replace('/${filename}', '')
-    content.url        = domain + '/' + content.filepath + '/' + file.name
+    content.url        = domain + '/' + content.filepath + '/' + to_s3_filename(file.name)
     content.filename   = file.name
     content.filesize   = file.size if 'size' of file
     content.filetype   = file.type if 'type' of file
