@@ -78,6 +78,33 @@ module S3FileField
       end
     end
 
+    describe "url" do
+      it "can be set from config" do
+        s3_uploader = S3Uploader.new(:url => "https://www.geocities.com")
+        expect(s3_uploader.field_data_options[:url]).to eq "https://www.geocities.com"
+      end
+
+      it "defaults to <bucket>.s3.amazonaws.com/" do
+        s3_uploader = S3Uploader.new(:bucket => "geocities-backup")
+        expect(s3_uploader.field_data_options[:url]).to eq "//geocities-backup.s3.amazonaws.com/"
+      end
+
+      it "can be forced to use https" do
+        s3_uploader = S3Uploader.new(:bucket => "geocities-backup", :ssl => true)
+        expect(s3_uploader.field_data_options[:url]).to eq "https://geocities-backup.s3.amazonaws.com/"
+      end
+
+      it "can be forced to use http" do
+        s3_uploader = S3Uploader.new(:bucket => "geocities-backup", :ssl => false)
+        expect(s3_uploader.field_data_options[:url]).to eq "http://geocities-backup.s3.amazonaws.com/"
+      end
+
+      it "can be forced to use a specific region" do
+        s3_uploader = S3Uploader.new(:bucket => "geocities-backup", :region => "s3-us-middle-3")
+        expect(s3_uploader.field_data_options[:url]).to eq "//geocities-backup.s3-us-middle-3.amazonaws.com/"
+      end
+    end
+
     context '#field_options' do
       it 'removes s3_file_field specific options' do
         options = S3Uploader.new(:acl => true).field_options
