@@ -13,7 +13,9 @@ module S3FileField
         max_file_size: 500.megabytes,
         conditions: [],
         key_starts_with: S3FileField.config.key_starts_with || 'uploads/',
-        region: S3FileField.config.region || 's3'
+        region: S3FileField.config.region || 's3',
+        url: S3FileField.config.url,
+        ssl: S3FileField.config.ssl
       }
 
       @key = original_options[:key]
@@ -60,7 +62,15 @@ module S3FileField
     end
 
     def url
-      "//#{@options[:bucket]}.#{@options[:region]}.amazonaws.com/"
+      @url ||=
+        if @options[:url]
+          @options[:url]
+        else
+          protocol = @options[:ssl] ? "https" : nil
+          subdomain = "#{@options[:bucket]}.#{@options[:region]}"
+          domain = "//#{subdomain}.amazonaws.com/"
+          [protocol, domain].compact.join(":")
+        end
     end
 
     def policy
