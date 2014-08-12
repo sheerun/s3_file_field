@@ -62,13 +62,15 @@ module S3FileField
     end
 
     def url
-      if @options[:url]
-        @options[:url]
-      else
-        protocol = @options[:ssl] ? "https" : "http"
-        subdomain = "#{@options[:bucket]}.#{@options[:region]}"
-        "#{protocol}://#{subdomain}.amazonaws.com/"
-      end
+      @url ||=
+        if @options[:url]
+          @options[:url]
+        else
+          protocol = @options[:ssl] ? "https" : nil
+          subdomain = "#{@options[:bucket]}.#{@options[:region]}"
+          domain = "//#{subdomain}.amazonaws.com/"
+          [protocol, domain].compact.join(":")
+        end
     end
 
     def policy

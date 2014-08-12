@@ -86,17 +86,17 @@ module S3FileField
 
       it "defaults to <bucket>.s3.amazonaws.com/" do
         s3_uploader = S3Uploader.new(:bucket => "geocities-backup")
-        expect(s3_uploader.field_data_options[:url]).to eq "http://geocities-backup.s3.amazonaws.com/"
+        expect(s3_uploader.field_data_options[:url]).to eq "//geocities-backup.s3.amazonaws.com/"
       end
 
-      it "can be forced to use ssl" do
+      it "can be forced to use https" do
         s3_uploader = S3Uploader.new(:bucket => "geocities-backup", :ssl => true)
         expect(s3_uploader.field_data_options[:url]).to eq "https://geocities-backup.s3.amazonaws.com/"
       end
 
       it "can be forced to use a specific region" do
         s3_uploader = S3Uploader.new(:bucket => "geocities-backup", :region => "s3-us-middle-3")
-        expect(s3_uploader.field_data_options[:url]).to eq "http://geocities-backup.s3-us-middle-3.amazonaws.com/"
+        expect(s3_uploader.field_data_options[:url]).to eq "//geocities-backup.s3-us-middle-3.amazonaws.com/"
       end
     end
 
