@@ -27,6 +27,9 @@ ready = function() {
       },
       fail: function(e, data) {
         return alert(data.failReason);
+      },
+      progress: function(e, data) {
+        window.document.title = parseInt(data.loaded / data.total * 100, 10) + '%'
       }
     });
   });
