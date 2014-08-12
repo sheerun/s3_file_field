@@ -32,7 +32,7 @@ S3FileField.config do |c|
   # c.max_file_size = 500.megabytes
   # c.conditions = []
   # c.key_starts_with = 'uploads/
-  # c.ssl = true # if unset or false, will default to current server settings
+  # c.ssl = true # if true, force SSL connection
 end
 ```
 
