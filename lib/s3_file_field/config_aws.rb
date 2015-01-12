@@ -12,7 +12,9 @@ module S3FileField
       :region,
       :key_starts_with,
       :ssl,
-      :url
+      :url,
+      :aws_hostname,
+      :aws_port
     ]
 
     attr_accessor *ATTRIBUTES

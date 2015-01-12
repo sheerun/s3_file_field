@@ -15,7 +15,9 @@ module S3FileField
         key_starts_with: S3FileField.config.key_starts_with || 'uploads/',
         region: S3FileField.config.region || 's3',
         url: S3FileField.config.url,
-        ssl: S3FileField.config.ssl
+        ssl: S3FileField.config.ssl,
+        aws_hostname: S3FileField.config.aws_hostname,
+        aws_port: S3FileField.config.aws_port
       }
 
       @key = original_options[:key]
@@ -67,8 +69,16 @@ module S3FileField
           @options[:url]
         else
           protocol = @options[:ssl] == true ? "https" : @options[:ssl] == false ? "http" : nil
-          subdomain = "#{@options[:bucket]}.#{@options[:region]}"
-          domain = "//#{subdomain}.amazonaws.com/"
+          if @options[:aws_hostname]
+            if @options[:aws_port]
+              domain = "//#{@options[:aws_hostname]}:#{@options[:aws_port]}/"
+            else
+              domain = "//#{@options[:aws_hostname]}/"
+            end
+          else
+            subdomain = "#{@options[:bucket]}.#{@options[:region]}"
+            domain = "//#{subdomain}.amazonaws.com/"
+          end
           [protocol, domain].compact.join(":")
         end
     end
