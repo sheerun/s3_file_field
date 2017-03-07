@@ -1,4 +1,4 @@
-DEPRECATED: Please use [shrine](http://shrinerb.com/rdoc/files/doc/direct_s3_md.html) instead! :heart:
+RETIRED: Please use [shrine](http://shrinerb.com/rdoc/files/doc/direct_s3_md.html) instead! :heart:
 
 # S3 File Field [![Build Status][travis-img-url]][travis-url]
 
