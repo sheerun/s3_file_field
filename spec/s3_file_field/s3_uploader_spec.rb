@@ -103,6 +103,22 @@ module S3FileField
         s3_uploader = S3Uploader.new(:bucket => "geocities-backup", :region => "s3-us-middle-3")
         expect(s3_uploader.field_data_options[:url]).to eq "//geocities-backup.s3-us-middle-3.amazonaws.com/"
       end
+
+      it "can be overridden with a different hostname" do
+        S3FileField.config.aws_hostname = "foo.bar"
+        s3_uploader = S3Uploader.new
+        expect(s3_uploader.field_data_options[:url]).to eq "//foo.bar/"
+        S3FileField.config.aws_hostname = nil
+      end
+
+      it "can be overridden with a different hostname and port" do
+        S3FileField.config.aws_hostname = "foo.bar"
+        S3FileField.config.aws_port = 1234
+        s3_uploader = S3Uploader.new(:aws_hostname => "foo.bar", :aws_port => 1234)
+        expect(s3_uploader.field_data_options[:url]).to eq "//foo.bar:1234/"
+        S3FileField.config.aws_hostname = nil
+        S3FileField.config.aws_port = nil
+      end
     end
 
     context '#field_options' do
