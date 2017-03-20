@@ -29,6 +29,7 @@ S3FileField.config do |c|
   c.access_key_id = ENV['AWS_ACCESS_KEY_ID']
   c.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
   c.bucket = ENV['AWS_BUCKET']
+  # c.region = 's3-us-middle-3' # note the 's3-' prefix; defaults to 's3' US Standard
   # c.acl = "public-read"
   # c.expiration = 10.hours.from_now.utc.iso8601
   # c.max_file_size = 500.megabytes
