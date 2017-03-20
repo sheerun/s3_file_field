@@ -12,6 +12,10 @@ module S3FileField
       :region,
       :key_starts_with,
       :ssl,
+      :expiration,
+      :max_file_size,
+      :conditions,
+      :acl,
       :url
     ]
 
